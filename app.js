@@ -44,7 +44,6 @@ module.exports = () => {
     console.log(`SNS subscription set up successfully: ${JSON.stringify(data)}`)
   })
 
-  app.use(bodyParser.json())
   app.use((req, res, next) => {
     // IMPORTANT, otherwise content-type is text for topic confirmation reponse, and body is emptys
     if (req.get('x-amz-sns-message-type')) {
@@ -52,6 +51,7 @@ module.exports = () => {
     }
     next()
   })
+  app.use(bodyParser.json())
 
   app.post('/sns/handle-bounces', async (req, res, next) => {
     try {

@@ -1,0 +1,19 @@
+{
+  "restartable": "rs",
+  "delay": 2,
+  "ignore": [
+    ".git",
+    "node_modules"
+  ],
+  "verbose": true,
+  "watch": [
+    "server.js",
+    "app.js"
+  ],
+  "ext": "jsn",
+  "env": {
+    "NODE_ENV": "development",
+    "BASE_URL": "http://127.0.0.1:300",
+    "PORT": 3000
+  }
+}

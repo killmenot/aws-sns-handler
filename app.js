@@ -22,7 +22,7 @@ module.exports = () => {
     next();
   });
 
-  app.post('/sns/handle-bounces', async (req, res) => {
+  app.post('/sns/handle-bounces', async (req, res, next) => {
     try {
       await handleResponse(topicArnBounce, req, res);
 
@@ -30,15 +30,12 @@ module.exports = () => {
         success: true,
         message: 'Successfully received message'
       });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+    } catch (err) {
+      next(err);
     }
   });
 
-  app.post('/sns/handle-complaints', async function(req, res) {
+  app.post('/sns/handle-complaints', async function(req, res, next) {
     try {
       handleResponse(topicArnComplaint, req, res);
 
@@ -47,11 +44,16 @@ module.exports = () => {
         message: 'Successfully received message.'
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      next(err);
     }
+  });
+
+  app.use((err, req, res, next) => {
+    console.log(err);
+
+    res.json({
+      ok: true
+    });
   });
 
 

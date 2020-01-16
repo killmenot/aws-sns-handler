@@ -3,6 +3,13 @@
 const http = require('http')
 const express = require('express')
 const bodyParser = require('body-parser')
+const AWS = require('aws-sdk')
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
+  region: process.env.AWS_REGION
+})
 
 async function handleResponse (topicArn, req, res) {
   console.log('req.headers', req.headers)
@@ -11,8 +18,31 @@ async function handleResponse (topicArn, req, res) {
 
 module.exports = () => {
   const app = express()
-  const topicArnBounce = {}
-  const topicArnComplaint = {}
+  const sns = new AWS.SNS()
+
+  const topicArnBounce = 'arn:aws:sns:us-west-2:765806996685:ses-bounces-topic-staging'
+  const paramsTopicBounces = {
+    Protocol: 'https',
+    TopicArn: topicArnBounce,
+    Endpoint: 'https://aws-sns-handler.herokuapp.com/sns/handle-bounces'
+  }
+
+  const topicArnComplaint = 'arn:aws:sns:us-west-2:765806996685:ses-complaints-topic-staging'
+  const paramsTopicComplaints = {
+    Protocol: 'https',
+    TopicArn: topicArnComplaint,
+    Endpoint: 'https://aws-sns-handler.herokuapp.com/sns/handle-complaints'
+  }
+
+  sns.subscribe(paramsTopicBounces, (error, data) => {
+    if (error) throw new Error(`Unable to set up SNS subscription: ${error}`)
+    console.log(`SNS subscription set up successfully: ${JSON.stringify(data)}`)
+  })
+
+  sns.subscribe(paramsTopicComplaints, (error, data) => {
+    if (error) throw new Error(`Unable to set up SNS subscription: ${error}`)
+    console.log(`SNS subscription set up successfully: ${JSON.stringify(data)}`)
+  })
 
   app.use(bodyParser.json())
   app.use((req, res, next) => {

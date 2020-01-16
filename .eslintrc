@@ -1,0 +1,16 @@
+{
+  "extends": "standard",
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "rules": {
+    "space-before-function-paren": "off",
+    "prefer-destructuring": ["error", {
+      "array": true,
+      "object": true
+    }, {
+      "enforceForRenamedProperties": false
+    }]
+  }
+}
